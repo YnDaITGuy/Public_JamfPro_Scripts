@@ -1,3 +1,7 @@
+Pick one
+------------------------------------------
+Option 1 - Bash 
+
 #!/bin/bash
 
 currentuser=$(/usr/bin/who | awk '/console/{ print $1 }')
@@ -9,8 +13,8 @@ currentuser=$(/usr/bin/who | awk '/console/{ print $1 }')
         end tell
 
 EOT
-
-AppleScript
+------------------------------------------
+Option 2 - AppleScript
 
 set userName to do shell script "whoami"
 
