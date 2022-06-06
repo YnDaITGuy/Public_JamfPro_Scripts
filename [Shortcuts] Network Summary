@@ -1,0 +1,9 @@
+#!/bin/bash
+
+## Monterey+
+
+network=$(networkQuality)
+
+osascript <<-EndOfScript
+display dialog "$network" with title "Network Summary"
+EndOfScript
