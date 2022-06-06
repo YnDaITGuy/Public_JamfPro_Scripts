@@ -103,7 +103,7 @@ userChoice=$("$jamfHelper" \
 
 # User Selects "OK"
 if [ "$userChoice" == "0" ]; then
-    echo $userChoice; $JAMF recon; "$JAMF" policy -event insights;
+    echo $userChoice; $JAMF recon; protectctl checkin --insights;
    
   
 # If user selects button2
