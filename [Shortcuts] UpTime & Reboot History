@@ -1,0 +1,22 @@
+OSASCRIPT="/usr/bin/osascript"
+
+boottime=`sysctl -n kern.boottime | awk '{print $4}' | sed 's/,//g'`
+unixtime=`date +%s`
+timeAgo=$(($unixtime - $boottime))
+upTime=`awk -v time=$timeAgo 'BEGIN { seconds = time % 60; minutes = int(time / 60 % 60); hours = int(time / 60 / 60 % 24); days = int(time / 60 / 60 / 24); printf("%.0f days, %.0f hours, %.0f minutes, %.0f seconds", days, hours, minutes, seconds); exit }'`
+
+lastreboot=$(last reboot | head -3)
+
+displayInfo="Your Mac has been up for 
+$upTime 
+
+Your recent reboot history 
+$lastreboot
+
+*You should restart every 14-21 days"
+
+upTime="button returned of (display dialog \"$displayInfo\" with title \"Uptime & Reboot Info\" with icon file posix file \"/System/Library/CoreServices/JavaLauncher.app/Contents/Resources/class.icns\" buttons {\"OK\"} default button {\"OK\"})"
+
+clickedButton=$( /usr/bin/osascript -e "$upTime" )
+
+exit 0
