@@ -1,6 +1,6 @@
 !#/bin/sh
 
-## Persistence Set Chrome As Default Browser button on Chrome if it's not default browser
+## Show the Set Chrome As Default Browser button in Chrome if it's not default browser
 
 currentUser=$(ls -l /dev/console | awk '{print $3}')
 
