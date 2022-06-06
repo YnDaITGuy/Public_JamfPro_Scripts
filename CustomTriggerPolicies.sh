@@ -29,7 +29,10 @@ sleep 10
 "$JAMF" policy -event installomator
 sleep 3 
 
-## Bootstrap Token
+## Jamf Protect Detect and Install (Just In Case) 
+"$JAMF" policy -event jamfprotect
+
+## Bootstrap Token (Just In Case) 
 "$JAMF" policy -event bootstrap
 
 ## Download Google Chrome
