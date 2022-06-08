@@ -7,7 +7,9 @@ time=$(date +"%r")
 
 ##########  ##########
 
-## This is notification, doesn't show anymore since Big Sur
+## You can put the notificatio/message on screen to show user what's going on
+
+## This is notification, doesn't show anymore since Monterey, probably osascript PPPC
 #"$OSASCRIPT" -e 'display notification  "Downloading Something"'
 
 ## This is a message/dialog window, auto close after certain seconds 
@@ -18,7 +20,8 @@ time=$(date +"%r")
 ## set "Restart Options" to "Restart Immediately" force restart if some policies require it. Only automatic if you have $timeout set up.
 ## sleep is to wait before running the next custom trigger
 ## take out $timeout if you don't want it to auto close the jamfHelper window. 
-
+## You can use this one line to install Rosetta if you like
+# [ $( /usr/bin/arch ) = "arm64" ] && /usr/sbin/softwareupdate --install-rosetta --agree-to-license
 
 ########## Policies Start ##########
 
