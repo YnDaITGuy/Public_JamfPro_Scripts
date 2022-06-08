@@ -13,9 +13,12 @@ time=$(date +"%r")
 ## This is a message/dialog window, auto close after certain seconds 
 #"$OSASCRIPT" -e 'display dialog  "Downloading Something" buttons {"OK"} default button 1 giving up after 4'
 
-## All policies set to "Ongoing"
-## This policy/script is set to "Enrollment Complete" and "Once For Computer"
-## Set "Restart Options" to "Restart Immediately" force restart if some policies required 
+## all policies set to "Ongoing" and use "Custom Event" to run
+## this policy/script is set to "Enrollment Complete" and "Once For Computer", except the Chrome prompt for default browser, that's Once per computer per user
+## set "Restart Options" to "Restart Immediately" force restart if some policies require it. Only automatic if you have $timeout set up.
+## sleep is to wait before running the next custom trigger
+## take out $timeout if you don't want it to auto close the jamfHelper window. 
+
 
 ########## Policies Start ##########
 
@@ -23,13 +26,13 @@ time=$(date +"%r")
 "$OSASCRIPT" -e 'display notification  "Downloading Rosetta2"'
 "$OSASCRIPT" -e 'display dialog  "Downloading Rosetta2" buttons {"OK"} default button 1 giving up after 4'
 "$JAMF" policy -event rosetta
-sleep 10
+sleep 7
 
 ## Download installomator
 "$JAMF" policy -event installomator
 sleep 3 
 
-## Jamf Protect Detect and Install (Just In Case) 
+## Jamf Protect Detect and Install If Missing (Just In Case) 
 "$JAMF" policy -event jamfprotect
 
 ## Bootstrap Token (Just In Case) 
@@ -57,7 +60,8 @@ sleep 3
 ## Add Username@Domain.org
 "$JAMF" policy -event officelogin
 
-sleep 10
+sleep 7
+## Double check all policies in case they are stuck or didn't run
 "$JAMF" policy
 
 
@@ -104,7 +108,8 @@ userChoice=$("$jamfHelper" \
 -timeout "$timeout" \
 -iconSize 120)
 
-# User Selects "OK"
+## Display App and Version jamfHelper message, recon, and sync Jamf Protect insights (if you have it)
+## It auto close and click OK after 10 seconds base on the $timeout
 if [ "$userChoice" == "0" ]; then
     echo $userChoice; $JAMF recon; protectctl checkin --insights;
    
