@@ -29,7 +29,9 @@ time=$(date +"%r")
 "$OSASCRIPT" -e 'display notification  "Downloading Rosetta2"'
 "$OSASCRIPT" -e 'display dialog  "Downloading Rosetta2" buttons {"OK"} default button 1 giving up after 4'
 "$JAMF" policy -event rosetta
-sleep 7
+
+## Trust JSS Ceritifcate if you have SSO set up for Jamf
+"$JAMF" policy -event trustJSS
 
 ## Download installomator
 "$JAMF" policy -event installomator
