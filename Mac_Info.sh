@@ -5,6 +5,8 @@ macosVersion=$(sw_vers -productVersion)
 echo $macosVersion
 
 ########## Model Id & Serial Number ##########
+# List Data Type 
+system_profiler -listDataTypes
 
 modelID=$(system_profiler SPHardwareDataType | awk '/Name/ {print $3}')
 echo "Model ID: $modelID"
