@@ -8,8 +8,8 @@ echo $macosVersion
 # List Data Type 
 system_profiler -listDataTypes
 
-modelID=$(system_profiler SPHardwareDataType | awk '/Name/ {print $3}')
-echo "Model ID: $modelID"
+modelName=$(system_profiler SPHardwareDataType | awk '/Name/ {print $3}')
+echo "Model Name: $modelName"
 
 serialNumber=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
 echo "$serialNumber"
