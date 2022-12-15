@@ -16,10 +16,10 @@ echo $serialNumber
 
 ########## Network ##########
 
-companySSID="YOUR COMPANY SSID "
+companySSID="YOUR COMPANY SSID"
 wifiInterface=$( networksetup -listallhardwareports | awk '/Wi-Fi/{getline; print $NF}' ) 
-ssidList=$( networksetup -listpreferredwirelessnetworks ${wifiInterface} | sed 's/^[    ]*//g;1d' )
-wifiPower=$(networksetup -getairportpower $wifiInterface | awk '{print $4}')
+ssidList=$( networksetup -getairportnetwork ${wifiInterface} | awk '/Network/ {print $NF}')
+wifiPower=$( networksetup -getairportpower $wifiInterface | awk '{print $4}' )
 wifiTotal=$( networksetup -listpreferredwirelessnetworks ${wifiInterface} | sed '1d' | wc -l | awk '{$1=$1;print}' )
 currentConnectedSSID=$( networksetup -getairportnetwork ${wifiInterface} | cut -d " " -f 4 )
 ssidIndex=$(networksetup -listpreferredwirelessnetworks ${wifiInterface} | awk '/YOUR COMPANY SSID/{print NR-2}')
