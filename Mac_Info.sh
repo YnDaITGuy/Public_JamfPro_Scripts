@@ -14,7 +14,7 @@ echo "Model Name: $modelName"
 serialNumber=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
 echo $serialNumber
 
-########## Network Interface & SSID List##########
+########## Network ##########
 
 companySSID="YOUR COMPANY SSID "
 wifiInterface=$( networksetup -listallhardwareports | awk '/Wi-Fi/{getline; print $NF}' ) 
