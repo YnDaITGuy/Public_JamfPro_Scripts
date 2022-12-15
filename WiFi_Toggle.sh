@@ -5,8 +5,5 @@
 #RequireAdminNetworkChange
 #RequireAdminPowerToggle
 
-## Allow changing network, admin, & On/Off
-#/usr/libexec/airportd prefs RequireAdminIBSS=NO RequireAdminNetworkChange=NO RequireAdminPowerToggle=NO
-
-## Disallow changing network, admin, & On/Off
+## Allow/Disallow 
 #/usr/libexec/airportd prefs RequireAdminIBSS=YES RequireAdminNetworkChange=YES RequireAdminPowerToggle=YES
