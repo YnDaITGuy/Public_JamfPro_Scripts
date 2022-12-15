@@ -12,12 +12,19 @@ modelName=$(system_profiler SPHardwareDataType | awk '/Name/ {print $3}')
 echo "Model Name: $modelName"
 
 serialNumber=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
-echo "$serialNumber"
+echo $serialNumber
+
+########## Network Interface & SSID List##########
+
+Interface=$(networksetup -listallhardwareports | awk '/Wi-Fi/{getline; print $NF}')
+ssidList=$( networksetup -listpreferredwirelessnetworks ${Interface} | sed 's/^[    ]*//g;1d' )
+echo $Interface
+echo $ssidList
 
 ########## Last Reboot ##########
 
 lastreboot=$(who -b | sed -E 's/^[^,]*boot *'//)
-echo "$lastreboot"
+echo $lastreboot
 
 ########## Uptime ##########
 
@@ -27,7 +34,7 @@ s/^1 hours/1 hour/; s/ 1 hours/ 1 hour/;
 s/min,/minutes,/; s/ 0 minutes,/ less than a minute,/; s/ 1 minutes/ 1 minute/;
 s/  / /; s/, *[[:digit:]]* users?.*//')
 
-echo "$UP"
+echo $UP
 
 ########## Free Disk Space ##########
 
@@ -38,9 +45,9 @@ DiskBytes=$( /usr/sbin/diskutil info / | /usr/bin/grep -E 'Total Space' | /usr/b
 FreePercentage=$(echo "scale=2; $FreeBytes*100/$DiskBytes" | bc)
 diskSpace="Disk Space: $FreeSpace free (${FreePercentage}% available)"
 
-echo "$diskSpace"
+echo $diskSpace
 
 ## Display Free Space - Monterey 12.6+
 free_disk_space=$(osascript -l 'JavaScript' -e "ObjC.import('Foundation'); var freeSpaceBytesRef=Ref(); $.NSURL.fileURLWithPath('/').getResourceValueForKeyError(freeSpaceBytesRef, 'NSURLVolumeAvailableCapacityForImportantUsageKey', null); Math.round(ObjC.unwrap(freeSpaceBytesRef[0]) / 1000000000)")  
 
-echo "$free_disk_space"
+echo $free_disk_space
