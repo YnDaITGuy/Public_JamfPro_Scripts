@@ -1,7 +1,10 @@
 #/bin/sh
 
+########## macOS Version ##########
 macosVersion=$(sw_vers -productVersion)
 echo $macosVersion
+
+########## Model Id & Serial Number ##########
 
 modelID=$(system_profiler SPHardwareDataType | awk '/Name/ {print $3}')
 echo "Model ID: $modelID"
@@ -9,8 +12,12 @@ echo "Model ID: $modelID"
 serialNumber=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
 echo "$serialNumber"
 
+########## Last Reboot ##########
+
 lastreboot=$(who -b | sed -E 's/^[^,]*boot *'//)
 echo "$lastreboot"
+
+########## Uptime ##########
 
 UP=$(uptime | sed -E 's/^[^,]*up *//; s/mins/minutes/; s/hrs?/hours/;
 s/([[:digit:]]+):0?([[:digit:]]+)/\1 hours, \2 minutes/;
@@ -20,14 +27,18 @@ s/  / /; s/, *[[:digit:]]* users?.*//')
 
 echo "$UP"
 
-## Display free space - Big Sur
+########## Free Disk Space ##########
+
+## Display Free Space - Big Sur
 FreeSpace=$( /usr/sbin/diskutil info / | /usr/bin/grep  -E 'Free Space|Available Space|Container Free Space' | /usr/bin/awk -F ":\s*" '{ print $2 }' | awk -F "(" '{ print $1 }' | xargs )
 FreeBytes=$( /usr/sbin/diskutil info / | /usr/bin/grep -E 'Free Space|Available Space|Container Free Space' | /usr/bin/awk -F "(\\\(| Bytes\\\))" '{ print $2 }' )
 DiskBytes=$( /usr/sbin/diskutil info / | /usr/bin/grep -E 'Total Space' | /usr/bin/awk -F "(\\\(| Bytes\\\))" '{ print $2 }' )
 FreePercentage=$(echo "scale=2; $FreeBytes*100/$DiskBytes" | bc)
 diskSpace="Disk Space: $FreeSpace free (${FreePercentage}% available)"
 
-## Display free space - Monterey 12.6+
+echo "$diskSpace"
+
+## Display Free Space - Monterey 12.6+
 free_disk_space=$(osascript -l 'JavaScript' -e "ObjC.import('Foundation'); var freeSpaceBytesRef=Ref(); $.NSURL.fileURLWithPath('/').getResourceValueForKeyError(freeSpaceBytesRef, 'NSURLVolumeAvailableCapacityForImportantUsageKey', null); Math.round(ObjC.unwrap(freeSpaceBytesRef[0]) / 1000000000)")  
 
 echo "$free_disk_space"
