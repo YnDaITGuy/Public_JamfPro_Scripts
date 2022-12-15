@@ -1,0 +1,5 @@
+http://www.manpagez.com/man/8/socketfilterfw/
+
+sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add /Users/$currentUser/Library/Arduino15/packages/builtin/tools/mdns-discovery/1.0.6/mdns-discovery
+
+Firewall settings cannot be modified from command line on managed Mac computers.
