@@ -1,6 +1,7 @@
 #!/bin/bash
 
 loggedInUser=`/bin/ls -l /dev/console | /usr/bin/awk '{ print $3 }'`
+#currentUser=$(ls -l /dev/console | awk '{print $3}')
 
 ## Show HDD
 /usr/bin/defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true;
