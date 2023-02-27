@@ -9,33 +9,44 @@ time=$(date +"%r")
 
 ## You can put the notificatio/message on screen to show user what's going on
 
-## This is notification, doesn't show anymore since Monterey, probably osascript PPPC
+## This is notification banner if you want to use it for each policy
 #"$OSASCRIPT" -e 'display notification  "Downloading Something"'
 
 ## This is a message/dialog window, auto close after certain seconds 
 #"$OSASCRIPT" -e 'display dialog  "Downloading Something" buttons {"OK"} default button 1 giving up after 4'
 
-## all policies set to "Ongoing" and use "Custom Event" to run
-## this policy/script is set to "Enrollment Complete" and "Once For Computer", except the Chrome prompt for default browser, that's Once per computer per user
-## set "Restart Options" to "Restart Immediately" force restart if some policies require it. Only automatic if you have $timeout set up.
-## sleep is to wait before running the next custom trigger
+## all policies are set to "Ongoing" and use "Custom Event" to run.
+## this script is set to "Enrollment Complete" and "Once For Computer".
+## set "Restart Options" to "Restart Immediately" force restart if some policies require it.
+## sleep is to wait before running the next custom trigger.
+## you can add & (ampersand) after the policy to run both simultaneously.
 ## take out $timeout if you don't want it to auto close the jamfHelper window. 
+
 ## You can use this one line to install Rosetta if you like
 # [ $( /usr/bin/arch ) = "arm64" ] && /usr/sbin/softwareupdate --install-rosetta --agree-to-license
 
+## Check if Setup Assistance is Running. Run Policies after Setup Assistance is completed.
+
+SetupAssistance_process=$(/bin/ps auxww | grep -q "[S]etup Assistant.app")
+while [ $? -eq 0 ]
+do
+    /bin/echo "Setup Assistant Still Running... Sleep for 2 seconds..."
+    /bin/sleep 2
+    SetupAssistance_process=$(/bin/ps auxww | grep -q "[S]etup Assistant.app")
+done
+
 ########## Policies Start ##########
 
-## Download Rosetta2
+## Download Rosetta. I'm using the notification and dialog to show what it looks like.
 "$OSASCRIPT" -e 'display notification  "Downloading Rosetta2"'
 "$OSASCRIPT" -e 'display dialog  "Downloading Rosetta2" buttons {"OK"} default button 1 giving up after 4'
 "$JAMF" policy -event rosetta
 
-## Trust JSS Ceritifcate if you have SSO set up for Jamf
-"$JAMF" policy -event trustJSS
-
 ## Download installomator
 "$JAMF" policy -event installomator
-sleep 3 
+
+## Enable Location Service if you have "Automatically advance through Setup Assistant" Enabled in Pre-Stage
+"$JAMF" policy -event locationservice
 
 ## Jamf Protect Detect and Install If Missing (Just In Case) 
 "$JAMF" policy -event jamfprotect
@@ -49,28 +60,44 @@ sleep 3
 ## Download Printer Driver
 "$JAMF" policy -event printerdriver
 
-## Prompt Default Browser Message
+## Prompt Select Default Browser Message
+## You'll need this script set up.
 "$JAMF" policy -event chromedefault
 sleep 3
 
-## Setting Up Dock With Web Clip
-"$JAMF" policy -event dock
-
 ## Download Microsoft Word
-"$JAMF" policy -event installword
+"$JAMF" policy -event installword &
+
+## Download Microsoft Excel
+"$JAMF" policy -event installexcel &
 
 ## Download Microsoft PowerPoint
 "$JAMF" policy -event installpowerpoint
 
-## Add Username@Domain.org
+## Add Username@Domain.org to Microsoft 365 (Office)
 "$JAMF" policy -event officelogin
+
+## Setting Up Dock With Web Clip
+"$JAMF" policy -event dock
 
 sleep 7
 ## Double check all policies in case they are stuck or didn't run
 "$JAMF" policy
 
+## You can run recon and 
+$JAMF recon
 
-########## Name & Version ##########
+## Sync Jamf Protect insights if you have it
+protectctl checkin --insights
+
+## You can have it say a word or play a sound when it's completed
+say "Finished!"
+
+
+########## App Name & Version ##########
+## You can add more. This displays version of macOS, Chrome, Word, & PowerPoint. 
+## Remember to put those in $description
+
 macOS=$(sw_vers -productVersion)
 chromeAppname="Google Chrome: "
 chromeVersion=$(mdls /Applications/Google\ Chrome.app -name kMDItemVersion | awk -F'"' '{print $2}')
@@ -81,10 +108,7 @@ pptVersion=$(mdls /Applications/Microsoft\ PowerPoint.app -name kMDItemVersion |
 
 
 ########## jamfHelper ##########
-## You can choose other icons but I usually use these 2
-
-## Self Service Icon 
-#/Applications/Self Service.app/Contents/Resources/AppIcon.icns
+## You can choose other icons
 ## Finder Icon
 #/System/Library/CoreServices/Finder.app/Contents/Resources/Finder.icns
 
@@ -98,7 +122,6 @@ macOS $macOS
 $chromeAppname $chromeVersion
 $wordAppname $wordVersion
 $pptAppname $pptVersion"
-
 button1="OK"
 
 
@@ -111,15 +134,17 @@ userChoice=$("$jamfHelper" \
 -button1 "$button1" \
 -defaultButton 1 \
 -timeout "$timeout" \
+-countdown \ 
 -iconSize 120)
 
-## Display App and Version jamfHelper message, recon, and sync Jamf Protect insights (if you have it)
+## Display Installed App and Version jamfHelper message, recon, and sync Jamf Protect insights (if you have it)
 ## It auto close and click OK after 10 seconds base on the $timeout
+## You can restart the Mac after timeout
 if [ "$userChoice" == "0" ]; then
-    echo $userChoice; $JAMF recon; protectctl checkin --insights;
+    echo $userChoice
    
   
-# If user selects button2
+# If user selects button2. Use this if you want to run other policies
 #elif [ "$userChoice" == "2" ]; then
 #   echo "User selected Cancel"
 fi
