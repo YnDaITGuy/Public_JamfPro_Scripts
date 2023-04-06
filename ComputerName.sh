@@ -18,7 +18,7 @@ modelID="/usr/sbin/sysctl hw.model | awk '{print $2}'"
 -> Macmini9,1
 
 ## Model Name
-modelNAme="/usr/bin/defaults read ~/Library/Preferences/com.apple.SystemProfiler.plist 'CPU Names' | cut -sd '"' -f 4 | uniq"
+modelName="/usr/bin/defaults read ~/Library/Preferences/com.apple.SystemProfiler.plist 'CPU Names' | cut -sd '"' -f 4 | uniq"
 -> Mac mini (M1, 2020)
 
 ## Chip
