@@ -14,15 +14,20 @@ echo "Model Name: $modelName"
 serialNumber=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
 echo $serialNumber
 
+Get Serial Number In Recovery Mode
+ioreg -l | grep IOPlatformSerialNumber
+
 ########## Network ##########
 
-companySSID="YOUR COMPANY SSID"
+companySSID="YOUR COMPANY SSID" #For comparison with $currentConnectedSSID
 wifiInterface=$( networksetup -listallhardwareports | awk '/Wi-Fi/{getline; print $NF}' ) 
 ssidList=$( networksetup -getairportnetwork ${wifiInterface} | awk '/Network/ {print $NF}')
 wifiPower=$( networksetup -getairportpower $wifiInterface | awk '{print $4}' )
 wifiTotal=$( networksetup -listpreferredwirelessnetworks ${wifiInterface} | sed '1d' | wc -l | awk '{$1=$1;print}' )
 currentConnectedSSID=$( networksetup -getairportnetwork ${wifiInterface} | cut -d " " -f 4 )
-ssidIndex=$(networksetup -listpreferredwirelessnetworks ${wifiInterface} | awk '/YOUR COMPANY SSID/{print NR-2}')
+ssidIndex=$(networksetup -listpreferredwirelessnetworks ${wifiInterface} | awk '/PUT YOUR COMPANY SSID HERE/{print NR-2}')
+ethernetMAC=$(/usr/sbin/networksetup -getmacaddress Ethernet | awk '/ / { print $3 }')
+wifiMAC=$(/usr/sbin/networksetup -getmacaddress Wi-Fi | awk '/ / { print $3 }')
 
 echo "Company SSID: $companySSID"
 echo "Interface: $wifiInterface"
@@ -31,6 +36,8 @@ echo "Status: $wifiPower"
 echo "Total SSID: $wifiTotal"
 echo "Current Connected: $currentConnectedSSID"
 echo "Company SSID Index: $ssidIndex"
+echo "Ethernet MAC: $ethernetMAC"
+echo "WiFi MAC: $wifiMAC"
 
 ########## Last Reboot ##########
 
