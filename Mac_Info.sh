@@ -25,7 +25,7 @@ ssidList=$( networksetup -getairportnetwork ${wifiInterface} | awk '/Network/ {p
 wifiPower=$( networksetup -getairportpower $wifiInterface | awk '{print $4}' )
 wifiTotal=$( networksetup -listpreferredwirelessnetworks ${wifiInterface} | sed '1d' | wc -l | awk '{$1=$1;print}' )
 currentConnectedSSID=$( networksetup -getairportnetwork ${wifiInterface} | cut -d " " -f 4 )
-ssidIndex=$(networksetup -listpreferredwirelessnetworks ${wifiInterface} | awk '/PUT YOUR COMPANY SSID HERE/{print NR-2}')
+ssidIndex=$(networksetup -listpreferredwirelessnetworks ${wifiInterface} | awk '/PUT YOUR COMPANY SSID HERE/{print NR-2}') #Should be 0 to be the priority
 ethernetMAC=$(/usr/sbin/networksetup -getmacaddress Ethernet | awk '/ / { print $3 }')
 wifiMAC=$(/usr/sbin/networksetup -getmacaddress Wi-Fi | awk '/ / { print $3 }')
 
