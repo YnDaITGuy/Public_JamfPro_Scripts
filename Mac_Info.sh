@@ -1,5 +1,9 @@
 #/bin/sh
 
+# For Sonoma+
+activeSSID=$(/usr/bin/wdutil info | /usr/bin/awk '/SSID/ { print $NF }' | head -n 1)
+
+
 ########## macOS Version ##########
 macosVersion=$(sw_vers -productVersion)
 echo $macosVersion
@@ -24,7 +28,7 @@ wifiInterface=$( networksetup -listallhardwareports | awk '/Wi-Fi/{getline; prin
 ssidList=$( networksetup -getairportnetwork ${wifiInterface} | awk '/Network/ {print $NF}')
 wifiPower=$( networksetup -getairportpower $wifiInterface | awk '{print $4}' )
 wifiTotal=$( networksetup -listpreferredwirelessnetworks ${wifiInterface} | sed '1d' | wc -l | awk '{$1=$1;print}' )
-currentConnectedSSID=$( networksetup -getairportnetwork ${wifiInterface} | cut -d " " -f 4 )
+activeSSID=$( networksetup -getairportnetwork ${wifiInterface} | cut -d " " -f 4 )
 ssidIndex=$(networksetup -listpreferredwirelessnetworks ${wifiInterface} | awk '/PUT YOUR COMPANY SSID HERE/{print NR-2}') #Should be 0 to be the priority
 ethernetMAC=$(/usr/sbin/networksetup -getmacaddress Ethernet | awk '/ / { print $3 }')
 wifiMAC=$(/usr/sbin/networksetup -getmacaddress Wi-Fi | awk '/ / { print $3 }')
@@ -34,7 +38,7 @@ echo "Interface: $wifiInterface"
 echo "List: $ssidList"
 echo "Status: $wifiPower"
 echo "Total SSID: $wifiTotal"
-echo "Current Connected: $currentConnectedSSID"
+echo "Current Connected: $activeSSID"
 echo "Company SSID Index: $ssidIndex"
 echo "Ethernet MAC: $ethernetMAC"
 echo "WiFi MAC: $wifiMAC"
