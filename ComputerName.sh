@@ -1,4 +1,40 @@
-#!/bin/bash
+#!/bin/sh
+
+## Get Positio, Location & Asset from API
+
+# Bearer token for API user
+jssurl="jamf url"
+username="apiuser"
+password="paipassword" 
+
+# request auth token
+authToken=$( /usr/bin/curl \
+--request POST \
+--silent \
+--url "$jssurl/api/v1/auth/token" \
+--user "$username:$password" )
+
+# parse auth token
+token=$( /usr/bin/plutil \
+-extract token raw - <<< "$authToken" )
+tokenExpiration=$( /usr/bin/plutil \
+-extract expires raw - <<< "$authToken" )
+localTokenExpirationEpoch=$( TZ=GMT /bin/date -j \
+-f "%Y-%m-%dT%T" "$tokenExpiration" \
++"%s" 2> /dev/null )
+echo "Got bearer token successfully."
+
+serial=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
+theXML=$( /usr/bin/curl \
+--silent \
+--header "Authorization: Bearer $token" \
+--header "Accept: text/xml" \
+--url $jssurl/JSSResource/computers/serialnumber/$serial )
+
+position=$( /usr/bin/xpath -e "/computer/location/position/text()" 2>/dev/null <<< "$theXML" )
+location=$( /usr/bin/xpath -e "/computer/location/building/text()" 2>/dev/null <<< "$theXML" )
+asset=$( /usr/bin/xpath -e "/computer/general/asset_tag/text()" 2>/dev/null <<< "$theXML" )
+
 
 ## Current Logged In User, use either one
 currentUser=$(ls -l /dev/console | awk '{print $3}')
