@@ -1,6 +1,6 @@
 #!/bin/sh
 
-## Get Positio, Location & Asset from API
+## API
 
 # Bearer token for API user
 jssurl="jamf url"
@@ -34,6 +34,19 @@ theXML=$( /usr/bin/curl \
 position=$( /usr/bin/xpath -e "/computer/location/position/text()" 2>/dev/null <<< "$theXML" )
 location=$( /usr/bin/xpath -e "/computer/location/building/text()" 2>/dev/null <<< "$theXML" )
 asset=$( /usr/bin/xpath -e "/computer/general/asset_tag/text()" 2>/dev/null <<< "$theXML" )
+
+
+# Expire bearer token for API user
+/usr/bin/curl \
+--header "Authorization: Bearer $token" \
+--request POST \
+--silent \
+--url "$jamfProURL/api/v1/auth/invalidate-token"
+echo "Expire bearer token successfully."
+
+exit
+
+
 
 
 ## Current Logged In User, use either one
