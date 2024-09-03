@@ -9,3 +9,10 @@ do
     networksetup -removepreferredwirelessnetwork $interface UnknownWiFi3
     networksetup -removepreferredwirelessnetwork $interface UnknownWiFi4
 done
+
+## Allow standard user to Network & WiFi System Settings pane
+## authorizationdb write right-name [allow|deny|rulename]
+echo allowing everyone to write to network and wifi services
+/usr/bin/security authorizationdb write system.preferences.network allow
+/usr/bin/security authorizationdb write system.services.systemconfiguration.network allow
+/usr/bin/security authorizationdb write com.apple.wifi allow
