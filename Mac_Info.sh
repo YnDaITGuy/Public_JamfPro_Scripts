@@ -2,7 +2,7 @@
 
 # For Sonoma+
 activeSSID=$(/usr/bin/wdutil info | /usr/bin/awk '/SSID/ { print $NF }' | head -n 1)
-
+IP=$(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | grep -Fv 10.127 | awk '{print $2}')
 
 ########## macOS Version ##########
 macosVersion=$(sw_vers -productVersion)
